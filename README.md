@@ -37,6 +37,14 @@ As we major `nixcloud.monitoring` we invite you to use it and send feedback to u
 
 At the moment this service is for free but we will introduce a cost model soon.
 
+## Pitfalls
+
+* sometimes the ember.js based webpage gets disconnected and needs a manual reload
+* sometimes the deployment for the monitoring gets stuck and some monitoring targets have to be removed using the webinterface until the deployment works again (this happens when the check_dns implementation changed and the client has a different implementation than the server. we work on an automation here)
+* sometimes `nixcloud.monitoring` must be updated on your client, because it must be in sync with the server implementation
+
+We work on all these things and our final goal is merge `nixcloud.monitoring` into `nixcloud-webservices`.
+
 # Using nixcloud.monitoring
 
 An active exampel would be:
