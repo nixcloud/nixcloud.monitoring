@@ -96,6 +96,20 @@ nixcloud.monitoring = {
   };
 };
 ```
+
+## List rules timers
+
+Using a systemd timer the target rule is pused periodically
+
+```
+systemctl list-timers --all
+NEXT                          LEFT     LAST                          PASSED        UNIT                               ACTIVATES
+Fri 2018-09-14 04:18:26 CEST  16h left Wed 2018-09-12 16:15:31 CEST  19h ago       systemd-tmpfiles-clean.timer       systemd-tmpfiles-clean.service
+Fri 2018-09-14 05:31:08 CEST  17h left Wed 2018-09-12 17:28:09 CEST  18h ago       example.org-HTTP.timer            nixcloud.monitoring-active-example.com-HTTP.service
+```
+
+This needs to be done frequently so the target(s) don't get garbage collected. This means that a service like a webserver brings its own monitoring targets and whenever that service is put to rest the user will get a load of error emails but after a few days the errors/warnings stop. In the between time the user can either fix the service or remove the monitoring rules from the monitoring manually using the webinterface at status.nixcloud.io/qknight
+
 # Usage
 
 ## Declarative
