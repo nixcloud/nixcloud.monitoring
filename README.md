@@ -12,26 +12,26 @@ As we major `nixcloud.monitoring` we invite you to use it and send feedback to u
 
 0. add nixcloud.monitoring to your configuration.nix
 
-    cd /etc/nixos
-    git clone http://github.com/nixcloud/nixcloud.monitoring
+        cd /etc/nixos
+        git clone http://github.com/nixcloud/nixcloud.monitoring
 
-    vim configuration.nix and add the code below into the imports line:
+        vim configuration.nix and add the code below into the imports line:
 
-    imports =
-    [
-      ./hardware-configuration.nix
-      ./nixcloud.monitoring/nixcloud.monitoring.nix
-    ];
+        imports =
+        [
+          ./hardware-configuration.nix
+          ./nixcloud.monitoring/nixcloud.monitoring.nix
+        ];
 
 1. at https://auth.nixcloud.io, register a new user, say it is called qknight
 2. visit https://monitoring.nixcloud.io and login using OAuth2 from auth.nixcloud.io, just click 'login'
 3. generate an apiKey for your user at https://status.nixcloud.io/api-keys
 4. finally configure nixcloud.monitoring
 
-    nixcloud.monitoring = {
-      enable = true;
-      apiKey = "4d3c5jdl-3kv6-6c92-43c2-bddcd6949e41";
-    };
+        nixcloud.monitoring = {
+          enable = true;
+          apiKey = "4d3c5jdl-3kv6-6c92-43c2-bddcd6949e41";
+        };
 
 5. add targets, active or passive ones, see example below ...
 6. `nixos-rebuild switch` will take your configuration into service
