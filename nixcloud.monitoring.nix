@@ -137,7 +137,7 @@ with lib;
             timerConfig = {
               OnUnitActiveSec = "${toString element.config.timers.check} minutes";
               OnBootSec = "2min";
-              Unit = "nixcloud.monitoring-passive-${uniqueName}.service";
+              Unit = "nixcloud.monitoring-passive-rule-${uniqueName}.service";
               Persistent = "yes";
               AccuracySec = "1m";
               RandomizedDelaySec = "1min";
@@ -166,24 +166,6 @@ with lib;
               User  = "nixcloud-monitoring";
               Group = "nixcloud-monitoring";
               Type  = "oneshot";
-            };
-          };
-      }];
-      createPassiveTargetResultSystemDTimer = element: container:
-        let
-          uniqueName = "${element.host}-${element.name}";
-        in mkMerge [ container {
-          "${uniqueName}" = {
-            description = "nixcloud.monitoring result upload timer for ${uniqueName}";
-            wantedBy    = [ "timers.target" ];
-
-            timerConfig = {
-              OnUnitActiveSec = "${toString element.timers.check} minutes";
-              OnBootSec = "2min";
-              Unit = "nixcloud.monitoring-passive-rule-${uniqueName}.service";
-              Persistent = "yes";
-              AccuracySec = "1m";
-              RandomizedDelaySec = "1min";
             };
           };
       }];
@@ -220,6 +202,24 @@ with lib;
             };
           };
       }];
+      createPassiveTargetResultSystemDTimer = element: container:
+        let
+          uniqueName = "${element.host}-${element.name}";
+        in mkMerge [ container {
+          "${uniqueName}" = {
+            description = "nixcloud.monitoring result upload timer for ${uniqueName}";
+            wantedBy    = [ "timers.target" ];
+
+            timerConfig = {
+              OnUnitActiveSec = "${toString element.timers.check} minutes";
+              OnBootSec = "2min";
+              Unit = "nixcloud.monitoring-passive-result-${uniqueName}.service";
+              Persistent = "yes";
+              AccuracySec = "1m";
+              RandomizedDelaySec = "1min";
+            };
+          };
+      }];
       passiveScripts = map createPassiveScript passiveTargets;
       createPassiveScript = element: let
         uniqueName = "${element.config.host}-${element.config.name}";
@@ -249,12 +249,11 @@ with lib;
         fi
 
         # http://bigdatums.net/2016/11/21/using-variables-in-jq-command-line-json-parser/
-        json=$(echo "{}" | ${pkgs.jq}/bin/jq -c --arg output "$1" --arg perfdata "$2" --arg state $3 '{host: "${element.config.host}", name: "${element.config.name}", output: $output, perfdata: $perfdata, state: $state | tonumber }')                                                            
+        json=$(echo "{}" | ${pkgs.jq}/bin/jq -c --arg output "$1" --arg perfdata "$2" --arg state "$3" '{host: "${element.config.host}", name: "${element.config.name}", output: $output, perfdata: $perfdata, state: $state | tonumber }')
         cmd="${pkgs.curl}/bin/curl -X POST --header \"Authorization: ApiKey ${cfg.apiKey}\" --header \"Content-Type: application/json\" --data '$json' ${cfg.apiHost}/api/services/results"
         eval $cmd
         exit $status
       '';
-
       ######### <RESULTS> #######################################################################################################
       #### < /passive > ###################################################################################################################
 
