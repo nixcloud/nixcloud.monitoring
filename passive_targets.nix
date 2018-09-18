@@ -6,14 +6,7 @@ in
 
 mkOption {
   description = ''A list of passive monitoring targets. They can either be `imperative` or `declarative`.'';
-  # the default value is for status.nixcloud.io so we have at least one element if the configuration is empty
-  default = [
-    {
-      host = "passive.io";
-      name = "HTTP";
-      public = false;
-    }
-  ];
+  default = [];
   type = types.listOf (types.submodule {
     options = {
       tags = stdOptions.tags;

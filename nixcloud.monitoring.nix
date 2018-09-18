@@ -19,6 +19,7 @@ with lib;
     };
     targets = mkOption {
       type = types.submodule ({ name, ... } : (import ./options.nix) { inherit name config toplevel lib options; });
+      default = {};
       description = ''
         A set of 'active' or 'passive' targets (services) to monitor:
 
