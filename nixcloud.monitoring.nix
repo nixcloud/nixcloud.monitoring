@@ -65,7 +65,6 @@ with lib;
       createActiveSystemDService = element: container:
         let
           uniqueName = "${element.config.host}-${element.config.name}";
-          scriptName = "nixcloud.monitoring-active-${uniqueName}";
           options = (import ./client_active_targets.nix) lib {};
           hashOptions = (import ./hash.nix) lib;
           h = hashOptions options."${element.name}";
@@ -83,28 +82,38 @@ with lib;
             };
         in 
           assert (element.config.ipv4 == true || element.config.ipv6 == true) || abort "monitoring.nixcloud entry for ${uniqueName} has both ipv4 and ipv6 set to false. At least one of those must be enabled.";
-          mkMerge [ container {
-          "${scriptName}" = {
-            description = "nixcloud.monitoring active monitoring for target ${uniqueName}";
-            #wantedBy = [ "multi-user.target" ];
-            after = [ "network.target" ];
-            # FIXME: do proper exit code handling
-            script = ''
-              if [[ ${toString element.config.ipv4} == 1 ]]; then
-              ${pkgs.curl}/bin/curl -X POST --header "Authorization: ApiKey ${cfg.apiKey}" --header "Content-Type: application/json" --data '${builtins.toJSON  (filteredAndSerializedCommand payload4)}' ${cfg.apiHost}/api/services
-              fi
-              if [[ ${toString element.config.ipv6} == 1 ]]; then
-              ${pkgs.curl}/bin/curl -X POST --header "Authorization: ApiKey ${cfg.apiKey}" --header "Content-Type: application/json" --data '${builtins.toJSON  (filteredAndSerializedCommand payload6)}' ${cfg.apiHost}/api/services
-              fi
-              exit 0
-            '';
-            serviceConfig = {
-              User = "nixcloud-monitoring";
-              Group = "nixcloud-monitoring";
-              Type = "oneshot";
-            };
-          };
-      }];
+          mkMerge [ container 
+            (optionalAttrs (element.config.ipv4) {
+              "nixcloud.monitoring-active-ipv4-${uniqueName}" = {
+                description = "nixcloud.monitoring active monitoring for target ${uniqueName}";
+                after = [ "network.target" ];
+                script = ''
+                  ${pkgs.curl}/bin/curl -X POST --header "Authorization: ApiKey ${cfg.apiKey}" --header "Content-Type: application/json" --data '${builtins.toJSON  (filteredAndSerializedCommand payload4)}' ${cfg.apiHost}/api/services
+                  exit $status
+                '';
+                serviceConfig = {
+                  User = "nixcloud-monitoring";
+                  Group = "nixcloud-monitoring";
+                  Type = "oneshot";
+                };
+              };
+            })
+            (optionalAttrs (element.config.ipv6 == true) {
+              "nixcloud.monitoring-active-ipv6-${uniqueName}" = {
+                description = "nixcloud.monitoring active monitoring for target ${uniqueName}";
+                after = [ "network.target" ];
+                script = ''
+                  ${pkgs.curl}/bin/curl -X POST --header "Authorization: ApiKey ${cfg.apiKey}" --header "Content-Type: application/json" --data '${builtins.toJSON  (filteredAndSerializedCommand payload6)}' ${cfg.apiHost}/api/services
+                  exit $status
+                '';
+                serviceConfig = {
+                  User = "nixcloud-monitoring";
+                  Group = "nixcloud-monitoring";
+                  Type = "oneshot";
+                };
+              };
+            })
+          ];
 
       #### < /active > ###################################################################################################################
 
