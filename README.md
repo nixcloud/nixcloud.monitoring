@@ -8,6 +8,14 @@ We will extend `nixcloud-webservices` using `nixcloud.monitoring` soon and then 
 
 Demo at: https://status.nixcloud.io/qknight
 
+Active checks are listed here:
+
+https://github.com/nixcloud/nixcloud.monitoring/blob/master/client_active_targets.nix 
+
+And implemented here:
+
+https://github.com/nixcloud/nixcloud.monitoring/tree/master/active
+
 # BETA program
 
 As we major `nixcloud.monitoring` we invite you to use it and send feedback to us. All you need to do is this:
@@ -39,7 +47,7 @@ As we major `nixcloud.monitoring` we invite you to use it and send feedback to u
 6. `nixos-rebuild switch` will take your configuration into service
 7. visit https://status.nixcloud.io/qknight and see the targets appearing
 
-At the moment this service is for free but we will introduce a cost model soon.
+At the moment this service is for free but if we detect abuse or cost intensive usage we will inform you and either charge you for it or if you don't want that we cancel your account. We want to create a useful service here ;-)
 
 ## Pitfalls
 
