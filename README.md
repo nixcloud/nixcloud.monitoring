@@ -2,7 +2,7 @@
 
 ![nixcloud.TLS](logo/nixcloud.monitoring.png)
 
-This [nixpkgs](https://github.com/NixOS/nixpkgs) extension, called [nixcloud.monitoring](https://github.com/nixcloud/nixcloud.monitoring), let's you easily monitor your cloud servers' activities by active or passive monitoring which is displayed at status.nixcloud.io online.
+This [nixpkgs](https://github.com/NixOS/nixpkgs) extension, called [nixcloud.monitoring](https://github.com/nixcloud/nixcloud.monitoring), lets you easily monitor your cloud servers' activities by active or passive monitoring which is displayed at status.nixcloud.io online.
 
 We will extend `nixcloud-webservices` using `nixcloud.monitoring` soon and then services like `nixcloud.email` or `nixcloud.webservices` will get monitoring targets which will deploy once the services are configured automatically.
 
