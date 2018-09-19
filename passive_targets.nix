@@ -12,6 +12,7 @@ mkOption {
       tags = stdOptions.tags;
       host = stdOptions.host;
       public = stdOptions.public;
+      apiKey = stdOptions.apiKey;
       name = mkOption {
         type = types.str;
         description = ''

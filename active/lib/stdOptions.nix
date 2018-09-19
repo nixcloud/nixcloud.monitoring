@@ -36,4 +36,9 @@ with lib;  {
       example = true;
       default = true;
     };
+    apiKey = mkOption {
+      default = if (config ? nixcloud && config.nixcloud ? monitoring) then config.nixcloud.monitoring.apiKey else "";
+      example = "zws0mxsjyhzv9102vwgnzbm2r";
+      description = "API key used with status.nixcloud.io";
+    };
   }

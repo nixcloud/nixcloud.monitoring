@@ -39,21 +39,38 @@ with lib;
       createActiveSystemDTimer = element: container: 
       let
         uniqueName = "${element.config.host}-${element.config.name}";
-      in mkMerge [ container {
-          "${uniqueName}" = {
+      in mkMerge [ container 
+        (optionalAttrs (element.config.ipv4) {
+          "${uniqueName}-ipv4" = {
             description = "nixcloud.monitoring ${uniqueName}";
             wantedBy    = [ "timers.target" ];
 
             timerConfig = {
               OnUnitActiveSec = "24hours";
               OnBootSec = "2min";
-              Unit = "nixcloud.monitoring-active-${uniqueName}.service";
+              Unit = "nixcloud.monitoring-active-ipv4-${uniqueName}.service";
               Persistent = "yes";
               AccuracySec = "1m";
               RandomizedDelaySec = "1min";
             };
           };
-      }];
+        })
+        (optionalAttrs (element.config.ipv6) {
+          "${uniqueName}-ipv6" = {
+            description = "nixcloud.monitoring ${uniqueName}";
+            wantedBy    = [ "timers.target" ];
+
+            timerConfig = {
+              OnUnitActiveSec = "24hours";
+              OnBootSec = "2min";
+              Unit = "nixcloud.monitoring-active-ipv6-${uniqueName}.service";
+              Persistent = "yes";
+              AccuracySec = "1m";
+              RandomizedDelaySec = "1min";
+            };
+          };
+        })
+      ];
       activeTargets = 
         let
           activeCommandNames = filter (x: x != "_module") (attrNames cfg.targets.active);
@@ -88,7 +105,7 @@ with lib;
                 description = "nixcloud.monitoring active monitoring for target ${uniqueName}";
                 after = [ "network.target" ];
                 script = ''
-                  ${pkgs.curl}/bin/curl -X POST --header "Authorization: ApiKey ${cfg.apiKey}" --header "Content-Type: application/json" --data '${builtins.toJSON  (filteredAndSerializedCommand payload4)}' ${cfg.apiHost}/api/services
+                  ${pkgs.curl}/bin/curl -X POST --header "Authorization: ApiKey ${element.config.apiKey}" --header "Content-Type: application/json" --data '${builtins.toJSON  (filteredAndSerializedCommand payload4)}' ${cfg.apiHost}/api/services
                   exit $status
                 '';
                 serviceConfig = {
@@ -103,7 +120,7 @@ with lib;
                 description = "nixcloud.monitoring active monitoring for target ${uniqueName}";
                 after = [ "network.target" ];
                 script = ''
-                  ${pkgs.curl}/bin/curl -X POST --header "Authorization: ApiKey ${cfg.apiKey}" --header "Content-Type: application/json" --data '${builtins.toJSON  (filteredAndSerializedCommand payload6)}' ${cfg.apiHost}/api/services
+                  ${pkgs.curl}/bin/curl -X POST --header "Authorization: ApiKey ${element.config.apiKey}" --header "Content-Type: application/json" --data '${builtins.toJSON  (filteredAndSerializedCommand payload6)}' ${cfg.apiHost}/api/services
                   exit $status
                 '';
                 serviceConfig = {
@@ -170,7 +187,7 @@ with lib;
             wantedBy = [ "multi-user.target" ];
             after = [ "network.target" ];
             script = ''
-              ${pkgs.curl}/bin/curl -X POST --header "Authorization: ApiKey ${cfg.apiKey}" --header "Content-Type: application/json" --data '${builtins.toJSON payload}' ${cfg.apiHost}/api/services
+              ${pkgs.curl}/bin/curl -X POST --header "Authorization: ApiKey ${element.config.apiKey}" --header "Content-Type: application/json" --data '${builtins.toJSON payload}' ${cfg.apiHost}/api/services
             '';
             serviceConfig = {
               User  = "nixcloud-monitoring";
@@ -260,7 +277,7 @@ with lib;
 
         # http://bigdatums.net/2016/11/21/using-variables-in-jq-command-line-json-parser/
         json=$(echo "{}" | ${pkgs.jq}/bin/jq -c --arg output "$1" --arg perfdata "$2" --arg state "$3" '{host: "${element.config.host}", name: "${element.config.name}", output: $output, perfdata: $perfdata, state: $state | tonumber }')
-        cmd="${pkgs.curl}/bin/curl -X POST --header \"Authorization: ApiKey ${cfg.apiKey}\" --header \"Content-Type: application/json\" --data '$json' ${cfg.apiHost}/api/services/results"
+        cmd="${pkgs.curl}/bin/curl -X POST --header \"Authorization: ApiKey ${element.config.apiKey}\" --header \"Content-Type: application/json\" --data '$json' ${cfg.apiHost}/api/services/results"
         eval $cmd
         exit $status
       '';
