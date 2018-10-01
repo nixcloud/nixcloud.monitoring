@@ -6,7 +6,7 @@ This [nixpkgs](https://github.com/NixOS/nixpkgs) extension, called [nixcloud.mon
 
 We will extend `nixcloud-webservices` using `nixcloud.monitoring` soon and then services like `nixcloud.email` or `nixcloud.webservices` will get monitoring targets which will deploy once the services are configured automatically.
 
-Demo at: https://status.nixcloud.io/qknight
+Demo at: https://status.nixcloud.io/nixcloud
 
 Active checks are listed here:
 
