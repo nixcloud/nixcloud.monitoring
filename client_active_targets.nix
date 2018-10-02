@@ -6,4 +6,5 @@ lib: config: {
   check_ssl_cert   = (import ./active/check_ssl_cert_1.nix)  {inherit lib; inherit config;};
   check_smtp       = (import ./active/check_smtp_1.nix)      {inherit lib; inherit config;};
   check_dns        = (import ./active/check_dns_1.nix)       {inherit lib; inherit config;};
+  check_hydra      = (import ./active/check_hydra_1.nix)     {inherit lib; inherit config;};
 }
