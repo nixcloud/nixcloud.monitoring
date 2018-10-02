@@ -48,7 +48,7 @@ in
                   inherit command_line;
                 };
           }; 
-        } // stdOptions // { name = stdOptions.name "HYDRA-${config.project}-${config.jobset}";};
+        } // stdOptions // { name = stdOptions.name "${config.project}/${config.jobset}";};
     }));
   };
 }
