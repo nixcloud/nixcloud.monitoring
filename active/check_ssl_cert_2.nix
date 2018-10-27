@@ -45,7 +45,8 @@ in
                 port = [ "-p" "${toString config.port}" ];
                 warningDays = if (config.warningDays == 1000) then [] else [ "-w" "${toString config.warningDays}" ];
                 timeout = [ "-t" "${toString config.timeout}" ];
-                args = cmd ++ host ++ timeout ++ warningDays ++ port;
+                ocsp = [ "--ignore-ocsp" ];
+                args = cmd ++ host ++ timeout ++ warningDays ++ port ++ ocsp;
                 command_line = escapeShellArgs args;
               in
                 {
